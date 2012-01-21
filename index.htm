@@ -7,32 +7,30 @@
 		<script type="text/javascript">
 			var ical_file = 'sample.ics';
 		
-			//Bootstap Game
-			var obj;
+			//run ical parser on load
 			window.addEventListener("load", function(){
-				obj = new ical_parser(ical_file, function(events){
-					demoList(events);
+				//Create new ical parser
+				new ical_parser(ical_file, function(cal){
+					//When ical parser has loaded file
+					//get future events
+					events = cal.getFutureEvents();
+					//And display them
+					displayDemo(events);
 				});			
 			}, false);
 			
 			//Display All future events in ical file as list.
-			function demoList(events){
-				//Get current date
-				current_date = new Date();
-				//Foreach event returned by the ical_parser
-				for(var i=0; i<events.length;i++){
-					event = events[i];
-					//If the event is in the past (before current date) skip it.
-					if(event.DTSTART < current_date) continue;
-				
-					//Create Element in page with Events, Summary + day & start and end times.
+			function displayDemo(events){
+				//Foreach event
+				events.forEach(function(event){
+					//Create a list item
 					var li = document.createElement('li');
+					//Add details from cal file.
 					li.innerHTML = '<strong>' +event.SUMMARY + '</strong><br/> ' +
 					event.day + ': ' +event.start_time + ' - ' + event.end_time + ' ('+event.start_date+ ')' ;
-					
-					document.getElementById('calendar').appendChild(li);
-					
-				}
+					//Add list item to list.
+					document.getElementById('calendar').appendChild(li);	
+				});
 			}
 		</script>
 		<style type='text/css'>

@@ -6,6 +6,7 @@ Warning: This code is expermental and still rather hacky.
 
 **Usage Example:**
 
-		obj = new ical_parser("my_ical_file.ics", function(events){
+		new ical_parser("my_ical_file.ics", function(cal){
+			events = cal.getEvents();
 			//do somthing with the events.
 		});
