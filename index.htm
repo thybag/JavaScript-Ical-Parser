@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head> 
+		<title>Ical Parser Demo</title> 
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+		<script type="text/javascript" src='ical_parser.js'></script>
+		<script type="text/javascript">
+			var ical_file = 'sample.ics';
+		
+			//Bootstap Game
+			var obj;
+			window.addEventListener("load", function(){
+				obj = new ical_parser(ical_file, function(events){
+					demoList(events);
+				});			
+			}, false);
+			
+			//Display All future events in ical file as list.
+			function demoList(events){
+				//Get current date
+				current_date = new Date();
+				//Foreach event returned by the ical_parser
+				for(var i=0; i<events.length;i++){
+					event = events[i];
+					//If the event is in the past (before current date) skip it.
+					if(event.DTSTART < current_date) continue;
+				
+					//Create Element in page with Events, Summary + day & start and end times.
+					var li = document.createElement('li');
+					li.innerHTML = '<strong>' +event.SUMMARY + '</strong><br/> ' +
+					event.day + ': ' +event.start_time + ' - ' + event.end_time + ' ('+event.start_date+ ')' ;
+					
+					document.getElementById('calendar').appendChild(li);
+					
+				}
+			}
+		</script>
+		<style type='text/css'>
+			#calendar li { padding:6px;margin:2px auto;  border:solid 1px #eee; list-style:none;width:400px; }
+			#calendar li.header { background-color:#eee;font-size:1.1em;}
+		</style>
+	</head> 
+	<body> 
+		
+		<ul id='calendar'><li class='header'>Upcoming Events.</li></ul>
+	</body> 
+</html> 
