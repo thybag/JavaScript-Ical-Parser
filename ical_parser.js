@@ -4,7 +4,7 @@
  *
  * @author: Carl Saggs
  * @source: https://github.com/thybag/
- * @version: 0.1
+ * @version: 0.2
  */
 function ical_parser(feed_url, callback){
 	//store of unproccesed data.
