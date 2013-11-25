@@ -90,18 +90,23 @@ function ical_parser(feed_url, callback){
 				cur_event = {};
 			}
 			//If we encounter end event, complete the object and add it to our events array then clear it for reuse.
-			if(in_event && ln == 'END:VEVENT'){
+                        if(in_event && ln == 'END:VEVENT'){
 				in_event = false;
 				this.events.push(cur_event);
 				cur_event = null;
 			}
 			//If we are in an event
-			if(in_event){
+                        else if(in_event){
+                                //var lntrim = ln.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                                //var lnsplit = lntrim.split(':');
+                                //type = lnsplit[0];
+                                //val = lnsplit[1];
+
 				//Split the item based on the first ":"
 				idx = ln.indexOf(':');
 				//Apply trimming to values to reduce risks of badly formatted ical files.
 				type = ln.substr(0,idx).replace(/^\s\s*/, '').replace(/\s\s*$/, '');//Trim
-				val = ln.substr(idx+1,ln.length-(idx+1)).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+				val = ln.substr(idx+1).replace(/^\s\s*/, '').replace(/\s\s*$/, '');
 				
 				//If the type is a start date, proccess it and store details
 				if(type =='DTSTART'){
@@ -114,7 +119,7 @@ function ical_parser(feed_url, callback){
                                         cur_event.start_date_long = dt.day+'. '+dt.monthname+' '+dt.year ;
 				}
 				//If the type is an end date, do the same as above
-				if(type =='DTEND'){
+                                else if(type =='DTEND'){
 					dt = this.makeDate(val);
 					val = dt.date;
 					//These are helpful for display
@@ -123,7 +128,15 @@ function ical_parser(feed_url, callback){
 					cur_event.day = dt.dayname;
 				}
 				//Convert timestamp
-				if(type =='DTSTAMP') val = this.makeDate(val).date;
+                                else if(type =='DTSTAMP'){ 
+                                        val = this.makeDate(val).date;
+                                }
+                                else {
+                                    val = val
+                                        .replace(/\\r\\n/g,'<br />')
+                                        .replace(/\\n/g,'<br />')
+                                        .replace(/\\,/g,',');
+                                }
 
 				//Add the value to our event object.
 				cur_event[type] = val;
@@ -164,8 +177,8 @@ function ical_parser(feed_url, callback){
 		var future_events = [], current_date = new Date();
 		
 		this.events.forEach(function(itm){
-			//If the event starts after the current time, add it to the array to return.
-			if(itm.DTSTART > current_date) future_events.push(itm);
+			//If the event ends after the current time, add it to the array to return.
+			if(itm.DTEND > current_date) future_events.push(itm);
 		});
 		return future_events;
 	}
@@ -180,8 +193,8 @@ function ical_parser(feed_url, callback){
 		var past_events = [], current_date = new Date();
 		
 		this.events.forEach(function(itm){
-			//If the event starts before the current time, add it to the array to return.
-			if(itm.DTSTART <= current_date) past_events.push(itm);
+			//If the event ended before the current time, add it to the array to return.
+			if(itm.DTEND <= current_date) past_events.push(itm);
 		});
 		return past_events.reverse();
 	}
