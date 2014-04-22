@@ -76,7 +76,7 @@ function ical_parser(feed_url, callback){
 		this.events = [];
 		
 		//Clean string and split the file so we can handle it (line by line)
-		cal_array = data.replace(new RegExp( "\\r", "g" ), "").split("\n");
+		cal_array = data.replace(new RegExp( "\\r", "g" ), "").replace(/\n /g,"").split("\n");
 		
 		//Keep track of when we are activly parsing an event
 		var in_event = false;
