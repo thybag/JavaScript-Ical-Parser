@@ -6,11 +6,13 @@
  * @source: https://github.com/thybag/
  * @version: 0.2
  */
-function ical_parser(feed_url, callback){
+function ical_parser(feed_url, callback, xmlHttpParams){
 	//store of unproccesed data.
 	this.raw_data = null;
 	//Store of proccessed data.
 	this.events = [];
+	//store additionnal parameters for the xmlHttp object
+	this.xmlHttpParams = xmlHttpParams;
 	
 	/**
 	 * loadFile
@@ -22,6 +24,11 @@ function ical_parser(feed_url, callback){
 		//Create request object
 		try {xmlhttp = window.XMLHttpRequest?new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");}  catch (e) { }
 		//Grab file
+		if (this.xmlHttpParams) {
+			for (param in this.xmlHttpParams) {
+				xmlhttp[param] = this.xmlHttpParams[param];
+			}
+		}
 		xmlhttp.onreadystatechange = function(){
 			if ((xmlhttp.readyState == 4) && (xmlhttp.status == 200)) {
 				//On success, run callback.
